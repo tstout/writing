@@ -1,19 +1,27 @@
+% Compile with 'pdflatex -shell-escape memories.tex'
 %
-% This is an attempt at becoming proficient in latex, with a little bit of writing thrown in for unit testing purposes.
 %
-\documentclass[12pt]{article}
+\documentclass[12pt]{report}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{moreverb} 		% contains verbatimtab
-\title{Software Development 1995 - Present}
+\title{Software Development 1993 - Present}
 \author{Todd Stout}
 \date{May 2013}
 \begin{document}
 \maketitle
 
 \section{Introduction}
-I have been involved in software development for most of my life. I do not however, possess any great insight or wisdom. I have simply worked in several industries and experienced first-hand many different technologies along the way.
-This is an experiment that serves several selfish purposes. First, I would like to document the evolution of my thoughts and \emph{feelings} regarding the creation of software. Second, my writing skills need attention, and therefore I must practice. This is not a technical treatise, however technical details will be mentioned frequently.
+I have been involved in software development for most of my life. I do
+not however, possess any great insight or wisdom. I have simply worked
+in several industries and experienced first-hand many different
+technologies along the way.
+
+This is an experiment that serves several selfish purposes. First, I
+would like to document the evolution of my thoughts and
+\emph{feelings} regarding the creation of software. Second, my writing
+skills need attention, and therefore I must practice. This is not a technical
+treatise, however technical details will be mentioned frequently.
 
 \pagebreak
 
@@ -22,14 +30,16 @@ This is an experiment that serves several selfish purposes. First, I would like 
 % for inspiration
 % http://tex.stackexchange.com/questions/29577/splitting-a-large-document-into-several-files
 %
-\section{A little bit of background}
+\section{Some  Background}
+My interest in computers began sometime around 1982. I was 12 at the
+time. My older brother tinkered with a TI/99 4A and an Odyssey game console.
 	\include{ti994a}	
-\section{Apple ][c - The early days}
+\section{Apple ][c - The Early Days}
 	Rough Outline
 	\begin{itemize}
 	\item 6502 ASM
 	\item Apple ][ assembler tools
-	\item floppy based account management written in asm with PRODOS.
+	\item floppy based account management written in 6502 assembler with PRODOS.
 	\item Interest in math (immediate application of basic trig in simple vector animations)
 	\item Consider grabbing some source code from this time. The old //c still worked a couple of years ago. Perhaps these ancient floppys can still be read.
 	\end{itemize}
@@ -38,7 +48,7 @@ This is an experiment that serves several selfish purposes. First, I would like 
 	Rough Outline
 	\begin{itemize}
 	\item Calculus - wow
-	\item Diff-eq - wow squared
+	\item Diff-Eq - wow squared
 	\item Discrete Math - useful, but engineering classes focused almost exclusively on calc. I wish now I had 
 	learned more in this area...it's never too late!
 	\item Digital Design - wow - Bring on the flip-flops! (love those JK state machines)
@@ -57,15 +67,20 @@ This is an experiment that serves several selfish purposes. First, I would like 
 	\item Apollo workstations
 	\item X-Windows
 	\item Bourne shell
+        \item ISPF panels/Green Screens
 	\item the getopt() aha moment
+        \item First exposure to layoffs.
+        
 	\end{itemize}
 	
 \section{Military Telecom Industry - First "Real" Job October 1993}
 	Rough Outline
 	\begin{itemize}
-	\item Living on brother's couch in Houston for a couple of months before finding employment
+	\item Living on brother's couch in Houston for a couple of
+          months before finding employment
+\include{hard-to-find-bugs-part-1}
 	\item PDP 11 - ICC Console
-	\item TC C31 DSP
+	\item TI C31 DSP
 	\item Morotolla 68K
 	\item VX-Works
 	\item FPGA - xilinx
@@ -73,7 +88,12 @@ This is an experiment that serves several selfish purposes. First, I would like 
 	\item ROM emulators
 	\item Sync comm RS-422
 	\item Tektronix logic probe
-	\item Switch architecture Interesting attributes: DUART multidrop mode, storing .o files in DB and linking at runtime
+	\item Switch architecture Interesting attributes: DUART
+          multidrop mode, storing .o files in DB and linking at
+          runtime
+          \item In Retrospect, the code was very clean compared
+            to commercial endeavours. Reflect on why that seems hard
+            to achieve these days in the commercial sector.
 	\end{itemize}
 
 \section{Commercial Telecom Industry 1995 - 2006}
@@ -81,18 +101,36 @@ This is an experiment that serves several selfish purposes. First, I would like 
 	\begin{itemize}
 	\item The telecom boondoogle
 	\item C, C++, more C++, then Java, with a smattering of SQL
-	\item OO/UML
+	\item OO/UML (Why do good pictures almost never precipitate
+          good code?)
+        \item OO Databases
 	\item All encompassing platform attempt
 	\item Phoenix project, networking, networking, then PNet, it's all about async IO stupid
 	\item CORBA vs DCOM
 	\item IQTalk - smalltalk inspiration
 	\item The rise of XML (if it has angle brackets, it's got to be good!)
-	\item Any code samples from this period?
+	\item Any code samples from this period? 
+          I'm afraid not...damn I wish I had saved some for posterity.
 	\end{itemize}
 
 \section{Finance Industry 2006 - 2012}
+Rough Outline
+\begin{itemize}
+\item My First Experience being employed by a Microsoft-Only Shop.
+\item The amount of money in this industry for creating absolutely
+  nothing is staggering...
+\item Javascript becomes a first-class citizen.
+\item 
 
+\end{itemize}
+
+\section{}
 \section{Retail Industry 2012 - Present}
+
+\section{Databases}
+\begin{itemize}
+\item dbtools - go/vs semicolon semicolons and splitting - many headaches  
+\end{itemize}
 
 Created by \LaTeX\	
 \end{document}
