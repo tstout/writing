@@ -1,28 +1,126 @@
-\paragraph 
-The interesting bugs tend to stay in your memory for a verylong time. 
-My first juicy one dates back to 1993. It was my first "real" job
-after college. I was working for a telecom company specializing in
-military communications. Since I was the new grunt on the team, my
-first assignment was the bug that no one wanted to deal with. The
-defect was low priority from the customer's viewpoint, but they voiced mild irritation every few months. It was occasionally annoying, but not a show-stopper.
+\paragraph{}
+The interesting bugs tend to stay in your memory for a verylong time. My first
+juicy one dates back to 1993. It was my first "real" job after college. I was
+working for a telecom company specializing in military communications. Since I
+was the new grunt on the team, my first assignment was the bug that no one
+wanted to deal with. The defect was low priority from the customer's viewpoint,
+but they voiced mild irritation every few months. It was occasionally annoying,
+but not a show-stopper.
 
-\paragraph The system in question was ancient, even by 1993 standards. It was a mil spec voice and data communications console. The guts of the beast consisted of off-the-shelf PDP-11 hardware and various custom communication boards, complete with the requisite gobs of firmware. Yes, the core really was a PDP-11 removed from its traditional chassis. The console had many features, and one of them was providing a basic secure phone. The bug I was investigating was not in the high-end features, but in the simple phone keypad. For one out of every 100 or so key presses, the tone (DTMF) for a key would stick until the user hung up and dialed again.
+\paragraph{}
+The system in question was ancient, even by 1993 standards. It was a mil spec
+voice and data communications console. The guts of the beast consisted of
+off-the-shelf PDP-11 hardware and various custom communication boards, complete
+with the requisite gobs of firmware. Yes, the core really was a PDP-11 removed
+from its traditional chassis. The console had many features, and one of them was
+providing a basic secure phone. The bug I was investigating was not in the
+high-end features, but in the simple phone keypad. For one out of every 100 or
+so key presses, the tone (DTMF) for a key would stick until the user hung up and
+dialed again.
+\paragraph {}
+After some code spelunking, I discovered that the keypad firmware sent commands
+via a DUART to a tone generator. The generator accepted simple commands to start
+and stop tones (big surprise). Solving this was going to be easy, I thought. The
+problem was likely a simple logic issue where the stop tone command was not
+always sent when it should be. After reviewing the circuit schematics for the
+board, I was pleased to discover that the designers had configured one channel
+of the DUART as a debug port, with a small header for the crusty, yet trusty
+2-3-7 (TX, RX, and GND of RS-232). This configuration allowed even the village
+idiot to make a cable that could easily be connected to the serial port of any
+PC, workstation, or VTXXX terminal.
+\paragraph {}
+Believe it or not, there was a culture back then such that software folks had to
+battle with hardware designers to make small concessions such as an RS-232 port
+for firmware debugging. The argument was always something like "That will add 50
+cents to the cost of every board! Why can't you software people get it together
+before we go into production?" When confronted with this in meetings, I always
+wanted to pipe up with "Well, let's talk about all the white wires that needed
+to be applied to boards X,Y and Z, after they were put into production". I never
+actually stated my true thoughts on the matter, since I accepted (capitulated)
+that it would be in vain. I was a subordinate software grunt in a world of
+hardware hubris.
+\paragraph {}
+Before I forget, I should mention one particularly horrible hardware blunder.
+Several hundred boards made it to production with some data lines reversed. I
+don't recall exactly what communications circuitry was involved (maybe an RS422
+link), but the end result was that we had to work around the problem in software
+by mirroring every byte before writing to the transmitting device, and mirror
+again when reading. A simple lookup table did the trick efficiently since we
+were only dealing with 8 bits at a time, but from an engineering and common
+sense perspective, it sure did not feel right. Economically however, it was the
+right thing to do. I recall that there were many other less severe hardware
+blunders my team had to work around. There was certainly an attitude back then
+that hardware was never at fault. Perhaps this culture still exists. I have not
+worked in the embedded world since 1995, therefore I am not a contemporary
+authority on the subject. Further discussion on this topic is warranted, but for
+now, back to the bug.
+\paragraph {}
+My first course of action was to create a debug build of the firmware that
+contained critical logging to an RS-232 port. At the time, doing this seemed
+perfectly natural. In hindsight, it seems primitive. The board I was debugging
+had no file system. There was not any infrastructure to log via a network or
+hardware bus to some central data store. The RS-232 port was my only logging
+mechanism. I needed to verify that the firmware was not sending the stop tone
+when the annoying problem manifested itself. When I went to insert the necessary
+logging, I quickly realized that I was the first to need the debug port. The
+released firmware did not configure the debug port at all. At the time I smiled
+when this became apparent. Back then I loved creating C structs and unions to
+program hardware registers. The inane intricacy had some primitive appeal. This
+probably explains why I suffered from an infatuation with C++ many years later.
+After writing a bit of C code, a fresh compile, and an EPROM burn, I now had the
+ability to log debug messages via the serial port.
+\paragraph {}
+I did not have any reliable mechanism to repeat the error. I had to bang on the
+keypad many times until a tone would stick. Usually 80 or so key presses would
+trigger the bug. In retrospect, I probably could have saved some time by
+creating debug code in the firmware to simulate keypad events. Hindsight is
+always 20/20. What I did do however was log all the commands being written to
+the tone generator. I expected that logging would show when the tone did not
+terminate properly, the stop tone command was not sent due to a race condition,
+or logic bug. I would then proceed to track down the race or logic problem. To
+my surprise, the VT220 connected to my freshly minted debug port showed that the
+stop tone command was indeed being written to DUART transmit register when the
+bug manifested itself. Unfortunately, I was not well versed in all the nuances
+of the DUART, so my next assumption was that it was likely some type of hardware
+problem. I reserved an expensive logic probe (I think it was a techtronix) from
+the equipment room and began setting it up to analyze the data bus of the DUART.
+I expected to observe that the data lines would not contain the stop tone
+command bits when the problem occurred. After running a logic trace on the
+DUART's data bus, it became apparent that the stop command was indeed being
+written to the data bus correctly.
+\paragraph {}
+It had become very obvious that this might take a little longer to figure out.
+By this time, I had about 3 or 4 days invested in the problem. I now knew that
+the software was sending the stop tone command correctly and the data lines were
+propagating this command to the DUART, and yet the tone was not not ceasing. My
+next course of action was to use the probe to look at the bytes being sent to
+the tone generator. Perhaps the generator was the problem? Again using the logic
+probe, I monitored the transmit bytes via the TXD pin of the DUART. Ah ha!
+Finally progress! The stop command was never making it to the tone generator. I
+was happy, but I still had no solution. What would cause the DUART not to
+transmit bytes written to its transmit register? I had demonstrated via the
+software logging and the logic probe that the appropriate command was being
+written to the DUART. Could the DUART be defective? Highly unlikely. Millions of
+them were in production. There must be some internal state of the DUART such
+that writing a byte to the transmit register was not guaranteed to actually be
+transmitted. I began to pour over the DUART data sheet looking for a reason for
+this behavior. It did not take long to find a plausible explanation. I quickly
+found a likely candidate:
 
-\paragraph After some code spelunking, I discovered that the keypad firmware sent commands via a DUART to a tone generator. The generator accepted simple commands to start and stop tones (big surprise). Solving this was going to be easy, I thought. The problem was likely a simple logic issue where the stop tone command was not always sent when it should be. After reviewing the circuit schematics for the board, I was pleased to discover that the designers had configured one channel of the DUART as a debug port, with a small header for the crusty, yet trusty 2-3-7 (TX, RX, and GND of RS-232). This configuration allowed even the village idiot to make a cable that could easily be connected to the serial port of any PC, workstation, or VTXXX terminal.
+Bit 2 of the Status Register TxRDY - When set, it indicates that the
+transmit-holding register (the one waiting to be transmitted) is ready to be
+loaded with a new character.
 
-\paragraph Believe it or not, there was a culture back then such that software folks had to battle with hardware designers to make small concessions such as an RS-232 port for firmware debugging. The argument was always something like "That will add 50 cents to the cost of every board! Why can't you software people get it together before we go into production?" When confronted with this in meetings, I always wanted to pipe up with "Well, let's talk about all the white wires that needed to be applied to boards X,Y and Z, after they were put into production". I never actually stated my true thoughts on the matter, since I accepted (capitulated) that it would be in vain. I was a subordinate software grunt in a world of hardware hubris.
+Perhaps the firmware was not checking this bit before writing to the transmit
+register? I then took another look at the transmitting code, and sure enough, it
+was not checking this bit! A quick mod, and the problem was finally solved!
 
-\paragraph Before I forget, I should mention one particularly horrible hardware blunder. Several hundred boards made it to production with some data lines reversed. I don't recall exactly what communications circuitry was involved (maybe an RS422 link), but the end result was that we had to work around the problem in software by mirroring every byte before writing to the transmitting device, and mirror again when reading. A simple lookup table did the trick efficiently since we were only dealing with 8 bits at a time, but from an engineering and common sense perspective, it sure did not feel right. Economically however, it was the right thing to do. I recall that there were many other less severe hardware blunders my team had to work around. There was certainly an attitude back then that hardware was never at fault. Perhaps this culture still exists. I have not worked in the embedded world since 1995, therefore I am not a contemporary authority on the subject. Further discussion on this topic is warranted, but for now, back to the bug.
-
-\paragraph My first course of action was to create a debug build of the firmware that contained critical logging to an RS-232 port. At the time, doing this seemed perfectly natural. In hindsight, it seems primitive. The board I was debugging had no file system. There was not any infrastructure to log via a network or hardware bus to some central data store. The RS-232 port was my only logging mechanism. I needed to verify that the firmware was not sending the stop tone when the annoying problem manifested itself. When I went to insert the necessary logging, I quickly realized that I was the first to need the debug port. The released firmware did not configure the debug port at all. At the time I smiled when this became apparent. Back then I loved creating C structs and unions to program hardware registers. The inane intricacy had some primitive appeal. This probably explains why I suffered from an infatuation with C++ many years later. After writing a bit of C code, a fresh compile, and an EPROM burn, I now had the ability to log debug messages via the serial port.
-
-\paragrpah I did not have any reliable mechanism to repeat the error. I had to bang on the keypad many times until a tone would stick. Usually 80 or so key presses would trigger the bug. In retrospect, I probably could have saved some time by creating debug code in the firmware to simulate keypad events. Hindsight is always 20/20. What I did do however was log all the commands being written to the tone generator. I expected that logging would show when the tone did not terminate properly, the stop tone command was not sent due to a race condition, or logic bug. I would then proceed to track down the race or logic problem. To my surprise, the VT220 connected to my freshly minted debug port showed that the stop tone command was indeed being written to DUART transmit register when the bug manifested itself. Unfortunately, I was not well versed in all the nuances of the DUART, so my next assumption was that it was likely some type of hardware problem. I reserved an expensive logic probe (I think it was a techtronix) from the equipment room and began setting it up to analyze the data bus of the DUART. I expected to observe that the data lines would not contain the stop tone command bits when the problem occurred. After running a logic trace on the DUART's data bus, it became apparent that the stop command was indeed being written to the data bus correctly.
-
-\paragraph It had become very obvious that this might take a little longer to figure out. By this time, I had about 3 or 4 days invested in the problem. I now knew that the software was sending the stop tone command correctly and the data lines were propagating this command to the DUART, and yet the tone was not not ceasing. My next course of action was to use the probe to look at the bytes being sent to the tone generator. Perhaps the generator was the problem? Again using the logic probe, I monitored the transmit bytes via the TXD pin of the DUART. Ah ha! Finally progress! The stop command was never making it to the tone generator. I was happy, but I still had no solution. What would cause the DUART not to transmit bytes written to its transmit register? I had demonstrated via the software logging and the logic probe that the appropriate command was being written to the DUART. Could the DUART be defective? Highly unlikely. Millions of them were in production. There must be some internal state of the DUART such that writing a byte to the transmit register was not guaranteed to actually be transmitted. I began to pour over the DUART data sheet looking for a reason for this behavior. It did not take long to find a plausible explanation. I quickly found a likely candidate:
-
-Bit 2 of the Status Register
-TxRDY - When set, it indicates that the transmit-holding register (the one waiting to be transmitted) is ready to be loaded with a new character.
-
-Perhaps the firmware was not checking this bit before writing to the transmit register? I then took another look at the transmitting code, and sure enough, it was not checking this bit! A quick mod, and the problem was finally solved!
-
-\paragraph Someone much more experienced with a DUART would probably have immediately thought of checking for the proper usage of the TxRDY bit. However, this was a great learning experience for me. I was new at the company, and it accelerated my knowledge of my employer's processes such as source control usage, ROM image archiving, and how to use a logic probe to debug software. It was also very educational for me to look at circuit schematics alongside code. I did not work in the embedded world for long, but the 'cool' factor of using a hardware probe to debug software will always be a fond memory.
+\paragraph {}
+Someone much more experienced with a DUART would probably have immediately
+thought of checking for the proper usage of the TxRDY bit. However, this was a
+great learning experience for me. I was new at the company, and it accelerated
+my knowledge of my employer's processes such as source control usage, ROM image
+archiving, and how to use a logic probe to debug software. It was also very
+educational for me to look at circuit schematics alongside code. I did not work
+in the embedded world for long, but the 'cool' factor of using a hardware probe
+to debug software will always be a fond memory.
