@@ -1,139 +1,42 @@
 % Compile with 'pdflatex -shell-escape memories.tex'
 %
 %
-\documentclass[12pt]{report}
+\documentclass[12pt]{book}
 \usepackage{url}
 \usepackage{hyperref}
 \usepackage{moreverb} 		% contains verbatimtab
+
+\begin{document}
+
 \title{Software Development 1993 - Present}
 \author{Todd Stout}
-\date{May 2013}
-\begin{document}
+\date{March 2013}
+
 \maketitle
 
-\section{Introduction}
-I have been involved in software development for most of my life. I do
-not however, possess any great insight or wisdom. I have simply worked
-in several industries and experienced first-hand many different
-technologies along the way.
 
-This is an experiment, which serves several selfish purposes. First, I
-would like to document the evolution of my thoughts and
-\emph{feelings} regarding the creation of software. Second, my writing
-skills need attention, and therefore I must practice. This is not a technical
-treatise, however technical details will be mentioned frequently.
+\tableofcontents
 
-\pagebreak
+\chapter{Introduction}
+\input{intro}
 
-%
-% This is probably going to get large over time. Consider breaking it up now while it is small. Look here
-% for inspiration
-% http://tex.stackexchange.com/questions/29577/splitting-a-large-document-into-several-files
-%
-\section{Some  Background}
-My interest in computers began sometime around 1982. I was 12 at the
-time. My older brother tinkered with a TI/99 4A and an Odyssey game console.
-	\include{ti994a}	
-\section{Apple ][c - The Early Days}
-	Rough Outline
-	\begin{itemize}
-	\item 6502 ASM
-	\item Apple ][ assembler tools
-	\item floppy based account management written in 6502 assembler with PRODOS.
-	\item Interest in math (immediate application of basic trig in simple vector animations)
-	\item Consider grabbing some source code from this time. The old //c still worked a couple of years ago. Perhaps those ancient floppys can still be read.
-	\end{itemize}
+\chapter{The Early Days}
+\input{chapter1}
+
+\chapter{College}
+\input{chapter2}
+
+\chapter{Telecom}
+\input{chapter3}
+
+\chapter{Finance}
+\input{chapter4}
+
+\chapter{Retail}
+\input{chapter5}
+
+Created by \LaTeX\
 	
-\section{College 1988-1993}
-	Rough Outline
-	\begin{itemize}
-	\item Calculus - wow
-	\item Diff-Eq - wow squared
-	\item Discrete Math - useful, but engineering classes focused almost exclusively on calc. I wish now I had 
-	learned more in this area...it's never too late!
-	\item Digital Design - wow - Bring on the flip-flops! (love those JK state machines)
-	\item Operating Systems - neat
-	\item Programming - Everything should be written in C (or so I naively thought at the time)
-	\item IBM 370 Assembly - general purpose registers ready to do your bidding!
-	\item Senior project - what was it again?
-	\item Fortran - mention TAMUG summer school cruise. Old IBM desktops secured to tables due to rolling ship
-	\end{itemize}
-
-\section{Electronics Industry Co-op Job 1991-1992}
-	Rough Outline
-	\begin{itemize}
-	\item ASIC manufacturing
-	\item Mainframe
-	\item Apollo workstations
-	\item X-Windows
-	\item Bourne shell
-        \item ISPF panels/Green Screens
-	\item the getopt() aha moment
-        \item First exposure to layoffs.
-        
-	\end{itemize}
-	
-\section{Military Telecom Industry - First "Real" Job October 1993}
-	Rough Outline
-	\begin{itemize}
-	\item Living on brother's couch in Houston for a couple of
-          months before finding employment
-\include{hard-to-find-bugs-part-1}
-	\item PDP 11 - ICC Console
-	\item TI C31 DSP
-	\item Motorolla 68K
-	\item VX-Works
-	\item FPGA - xilinx
-	\item ROM Burning
-	\item ROM emulators
-	\item Sync comm RS-422
-	\item Tektronix logic probe
-	\item Switch architecture Interesting attributes: DUART
-          multidrop mode, storing .o files in DB and linking at
-          runtime
-          \item In Retrospect, the code was very clean compared
-            to commercial endeavours. Reflect on why that seems hard
-            to achieve these days in the commercial sector.
-	\end{itemize}
-
-\section{Commercial Telecom Industry 1995 - 2006}
-	Rough Outline
-	\begin{itemize}
-	\item The telecom boondoogle
-	\item C, C++, more C++, then Java, with a smattering of SQL
-	\item OO/UML (Why do good pictures almost never precipitate
-          good code?)
-        \item OO Databases
-	\item All encompassing platform attempt
-	\item Phoenix project, networking, networking, then PNet, it's all about async IO stupid
-	\item CORBA vs DCOM
-	\item IQTalk - smalltalk inspiration
-	\item The rise of XML (if it has angle brackets, it's got to be good!)
-	\item Any code samples from this period? 
-          I'm afraid not...damn I wish I had saved some for posterity.
-	\end{itemize}
-
-\section{Finance Industry 2006 - 2012}
-Rough Outline
-\begin{itemize}
-\item My First Experience being employed by a Microsoft-Only Shop.
-\item MS Office Inertia - Excel/Access/VBA
-\item The amount of money in this industry for creating absolutely
-  nothing is staggering...
-\item Javascript becomes a first-class citizen.
-\item 
-
-\end{itemize}
-
-\section{}
-\section{Retail Industry 2012 - Present}
-
-% \section{Databases}
-% \begin{itemize}
-% \item dbtools - go/vs semicolon semicolons and splitting - many headaches  
-% \end{itemize}
-
-Created by \LaTeX\	
 \end{document}
 
 
