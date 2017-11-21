@@ -1,13 +1,11 @@
-\paragraph{}
-The interesting bugs tend to stay in your memory for a verylong time. My first
+The interesting bugs tend to stay in your memory for a very long time. My first
 juicy one dates back to 1993. It was my first "real" job after college. I was
 working for a telecom company specializing in military communications. Since I
 was the new grunt on the team, my first assignment was the bug that no one
 wanted to deal with. The defect was low priority from the customer's viewpoint,
 but they voiced mild irritation every few months. It was occasionally annoying,
 but not a show-stopper.
-
-\paragraph{}
+\par
 The system in question was ancient, even by 1993 standards. It was a mil spec
 voice and data communications console. The guts of the beast consisted of
 off-the-shelf PDP-11 hardware and various custom communication boards, complete
@@ -17,18 +15,18 @@ providing a basic secure phone. The bug I was investigating was not in the
 high-end features, but in the simple phone keypad. For one out of every 100 or
 so key presses, the tone (DTMF) for a key would stick until the user hung up and
 dialed again.
-\paragraph {}
+\par
 After some code spelunking, I discovered that the keypad firmware sent commands
 via a DUART to a tone generator. The generator accepted simple commands to start
 and stop tones (big surprise). Solving this was going to be easy, I thought. The
 problem was likely a simple logic issue where the stop tone command was not
 always sent when it should be. After reviewing the circuit schematics for the
-board, I was pleased to discover that the designers had configured one channel
+board, I was pleased to discover that the designers had confxligured one channel
 of the DUART as a debug port, with a small header for the crusty, yet trusty
 2-3-7 (TX, RX, and GND of RS-232). This configuration allowed even the village
 idiot to make a cable that could easily be connected to the serial port of any
 PC, workstation, or VTXXX terminal.
-\paragraph {}
+\par
 Believe it or not, there was a culture back then such that software folks had to
 battle with hardware designers to make small concessions such as an RS-232 port
 for firmware debugging. The argument was always something like "That will add 50
@@ -39,7 +37,7 @@ to be applied to boards X,Y and Z, after they were put into production". I never
 actually stated my true thoughts on the matter, since I accepted (capitulated)
 that it would be in vain. I was a subordinate software grunt in a world of
 hardware hubris.
-\paragraph {}
+\par
 Before I forget, I should mention one particularly horrible hardware blunder.
 Several hundred boards made it to production with some data lines reversed. I
 don't recall exactly what communications circuitry was involved (maybe an RS422
@@ -54,7 +52,7 @@ that hardware was never at fault. Perhaps this culture still exists. I have not
 worked in the embedded world since 1995, therefore I am not a contemporary
 authority on the subject. Further discussion on this topic is warranted, but for
 now, back to the bug.
-\paragraph {}
+\par
 My first course of action was to create a debug build of the firmware that
 contained critical logging to an RS-232 port. At the time, doing this seemed
 perfectly natural. In hindsight, it seems primitive. The board I was debugging
@@ -69,7 +67,7 @@ program hardware registers. The inane intricacy had some primitive appeal. This
 probably explains why I suffered from an infatuation with C++ many years later.
 After writing a bit of C code, a fresh compile, and an EPROM burn, I now had the
 ability to log debug messages via the serial port.
-\paragraph {}
+\par
 I did not have any reliable mechanism to repeat the error. I had to bang on the
 keypad many times until a tone would stick. Usually 80 or so key presses would
 trigger the bug. In retrospect, I probably could have saved some time by
@@ -88,7 +86,7 @@ I expected to observe that the data lines would not contain the stop tone
 command bits when the problem occurred. After running a logic trace on the
 DUART's data bus, it became apparent that the stop command was indeed being
 written to the data bus correctly.
-\paragraph {}
+\par
 It had become very obvious that this might take a little longer to figure out.
 By this time, I had about 3 or 4 days invested in the problem. I now knew that
 the software was sending the stop tone command correctly and the data lines were
@@ -115,7 +113,7 @@ Perhaps the firmware was not checking this bit before writing to the transmit
 register? I then took another look at the transmitting code, and sure enough, it
 was not checking this bit! A quick mod, and the problem was finally solved!
 
-\paragraph {}
+\par
 Someone much more experienced with a DUART would probably have immediately
 thought of checking for the proper usage of the TxRDY bit. However, this was a
 great learning experience for me. I was new at the company, and it accelerated
