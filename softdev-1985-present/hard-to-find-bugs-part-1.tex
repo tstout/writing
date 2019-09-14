@@ -21,7 +21,7 @@ via a DUART to a tone generator. The generator accepted simple commands to start
 and stop tones (big surprise). Solving this was going to be easy, I thought. The
 problem was likely a simple logic issue where the stop tone command was not
 always sent when it should be. After reviewing the circuit schematics for the
-board, I was pleased to discover that the designers had confxligured one channel
+board, I was pleased to discover that the designers had configured one channel
 of the DUART as a debug port, with a small header for the crusty, yet trusty
 2-3-7 (TX, RX, and GND of RS-232). This configuration allowed even the village
 idiot to make a cable that could easily be connected to the serial port of any
